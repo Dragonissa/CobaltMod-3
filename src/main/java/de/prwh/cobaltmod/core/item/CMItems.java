@@ -38,7 +38,6 @@ public class CMItems {
     public static Item COBEX_SHOVEL;
     public static Item COBEX_SWORD;
     public static Item COBEX_HOE;
-    public static Item RECIPE_BOOK;
     public static Item FOENUM_STAFF;
     public static Item NJOSS_STAFF;
     public static Item FOENUM_CRYSTAL;

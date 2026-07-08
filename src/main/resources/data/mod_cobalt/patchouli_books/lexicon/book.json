@@ -1,0 +1,10 @@
+{
+    "name": "book.mod_cobalt.lexicon",
+    "landing_text": "book.mod_cobalt.landing_text",
+    "version": 1,
+    "i18n": true,
+    "creative_tab": "mod_cobalt.items",
+    "use_resource_pack": true,
+    "book_texture": "patchouli:textures/gui/book_purple.png",
+    "show_progress": false
+}

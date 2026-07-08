@@ -214,5 +214,8 @@
     "key.cobaltmod.label": "CobaltMod",
 
     "text.autoconfig.mod_cobalt.title": "CobaltMod Config",
-    "text.autoconfig.mod_cobalt.option.test": "Does nothing for now"
+    "text.autoconfig.mod_cobalt.option.test": "Does nothing for now",
+
+  "book.mod_cobalt.lexicon": "Cobalt Mod Lexicon",
+  "book.mod_cobalt.landing_text": "Welcome to the Cobalt Mod Lexicon! Here you will find all the information you need about the mod, including items, blocks, and mechanics. Use the categories on the right to navigate through the entries and learn more about the world of Cobalt."
 }

@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "cobalt-mod",
+	"id": "mod_cobalt",
 	"version": "${version}",
 	"name": "Cobalt Mod - Think Blue",
 	"description": "This mod adds the ore Cobalt and a lot more things themed around it",
