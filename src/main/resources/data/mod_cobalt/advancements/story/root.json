@@ -16,7 +16,7 @@
     "background": "minecraft:textures/gui/advancements/backgrounds/stone.png"
   },
   "criteria": {
-    "portal": {
+    "found_portal": {
       "trigger": "minecraft:location",
       "conditions": {
         "location": {
@@ -27,7 +27,7 @@
   },
   "requirements": [
     [
-      "portal"
+      "found_portal"
     ]
   ]
 }
