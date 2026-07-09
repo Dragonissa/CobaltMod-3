@@ -1,10 +1,11 @@
 package de.prwh.cobaltmod.core.tag;
 
 import de.prwh.cobaltmod.core.CobaltMod;
-import net.minecraft.block.Block;
-import net.minecraft.tag.TagKey;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
+
 
 public final class CMBlockTags {
     public static final TagKey<Block> LEAVES = register("leaves");
@@ -18,6 +19,6 @@ public final class CMBlockTags {
     }
 
     private static TagKey<Block> register(String id) {
-        return TagKey.of(Registry.BLOCK_KEY, new Identifier(CobaltMod.MOD_ID, id));
+        return TagKey.create(BuiltInRegistries.BLOCK.key(), new ResourceLocation(CobaltMod.MOD_ID, id));
     }
 }

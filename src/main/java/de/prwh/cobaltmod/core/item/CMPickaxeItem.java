@@ -1,12 +1,11 @@
 package de.prwh.cobaltmod.core.item;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.MiningToolItem;
-import net.minecraft.item.ToolMaterial;
-import net.minecraft.tag.BlockTags;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.item.Tier;
 
-public class CMPickaxeItem extends MiningToolItem {
-	protected CMPickaxeItem(ToolMaterial toolMaterial, int i, float f, Item.Settings settings) {
-		super((float)i, f, toolMaterial, BlockTags.PICKAXE_MINEABLE, settings);
+public class CMPickaxeItem extends PickaxeItem {
+	public CMPickaxeItem(Tier tier, int i, float f, Item.Properties properties) {
+		super(tier, i, f, properties);
 	}
 }

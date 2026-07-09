@@ -11,15 +11,15 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.particle.SuspendParticle;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.particle.SuspendedTownParticle;
+import net.minecraft.client.renderer.RenderType;
 
 public class CobaltModClient implements ClientModInitializer {
 
 	@Environment(EnvType.CLIENT)
 	@Override
 	public void onInitializeClient() {
-		BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
+		BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.cutout(),
 			CMBlocks.COBEX_SAPLING,
 			CMBlocks.TALL_COBEX_SAPLING,
 			CMBlocks.BLUE_GRASS,
@@ -32,7 +32,7 @@ public class CobaltModClient implements ClientModInitializer {
 			CMBlocks.BLUEBERRY_BUSH,
 			CMBlocks.BLUE_VINE);
 
-		ParticleFactoryRegistry.getInstance().register(CobaltMod.COBALT_AURA, SuspendParticle.MyceliumFactory::new);
+		ParticleFactoryRegistry.getInstance().register(CobaltMod.COBALT_AURA, SuspendedTownParticle.Provider::new);
 
 		if (FabricLoader.getInstance().isModLoaded("cloth-config")) {
 			AutoConfig.register(ModConfig.class, GsonConfigSerializer::new);

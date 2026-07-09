@@ -1,126 +1,71 @@
 package de.prwh.cobaltmod.core.block;
 
-import de.prwh.cobaltmod.core.tag.CMBlockTags;
-import net.minecraft.block.*;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.tag.FluidTags;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
-import java.util.Random;
 
-public class CMFarmlandBlock extends FarmlandBlock {
-    public CMFarmlandBlock(Settings settings) {
-        super(settings);
+public class CMFarmlandBlock extends FarmBlock {
+    public CMFarmlandBlock(BlockBehaviour.Properties properties) {
+        super(properties);
     }
 
-    @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return !this.getDefaultState().canPlaceAt(ctx.getWorld(), ctx.getBlockPos()) ? CMBlocks.COBALT_DIRT.getDefaultState() : super.getPlacementState(ctx);
-    }
+	public static void turnToDirt(@Nullable Entity entity, BlockState blockState, Level level, BlockPos blockPos) {
+		BlockState blockState2 = pushEntitiesUp(blockState, CMBlocks.COBALT_DIRT.defaultBlockState(), level, blockPos);
+		level.setBlockAndUpdate(blockPos, blockState2);
+		level.gameEvent(GameEvent.BLOCK_CHANGE, blockPos, GameEvent.Context.of(entity, blockState2));
+	}
 
-    @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        if (!state.canPlaceAt(world, pos)) {
-            setToDirt(state, world, pos);
-        }
+	public void fallOn(Level level, BlockState blockState, BlockPos blockPos, Entity entity, float f) {
+		if (!level.isClientSide && level.random.nextFloat() < f - 0.5F && entity instanceof LivingEntity && (entity instanceof Player || level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) && entity.getBbWidth() * entity.getBbWidth() * entity.getBbHeight() > 0.512F) {
+			turnToDirt(entity, blockState, level, blockPos);
+		}
+	}
 
-    }
+	public void tick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource randomSource) {
+		if (!blockState.canSurvive(serverLevel, blockPos)) {
+			turnToDirt((Entity)null, blockState, serverLevel, blockPos);
+		}
+	}
 
-    @Override
-    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        int i = (Integer)state.get(MOISTURE);
-        if (!isWaterNearby(world, pos) && !world.hasRain(pos.up())) {
-            if (i > 0) {
-                world.setBlockState(pos, (BlockState)state.with(MOISTURE, i - 1), 2);
-            } else if (!hasCrop(world, pos)) {
-                setToDirt(state, world, pos);
-            }
-        } else if (i < 7) {
-            world.setBlockState(pos, (BlockState)state.with(MOISTURE, 7), 2);
-        }
+	public void randomTick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource randomSource) {
+		int i = (Integer)blockState.getValue(MOISTURE);
+		if (!isNearWater(serverLevel, blockPos) && !serverLevel.isRainingAt(blockPos.above())) {
+			if (i > 0) {
+				serverLevel.setBlock(blockPos, (BlockState)blockState.setValue(MOISTURE, i - 1), 2);
+			} else if (!shouldMaintainFarmland(serverLevel, blockPos)) {
+				turnToDirt((Entity)null, blockState, serverLevel, blockPos);
+			}
+		} else if (i < 7) {
+			serverLevel.setBlock(blockPos, (BlockState)blockState.setValue(MOISTURE, 7), 2);
+		}
+	}
 
-    }
+	private static boolean shouldMaintainFarmland(BlockGetter blockGetter, BlockPos blockPos) {
+		return blockGetter.getBlockState(blockPos.above()).is(BlockTags.MAINTAINS_FARMLAND);
+	}
 
-    @Override
-    public void onLandedUpon(World world, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
-        if (!world.isClient && world.random.nextFloat() < fallDistance - 0.5F && entity instanceof LivingEntity && (entity instanceof PlayerEntity || world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING)) && entity.getWidth() * entity.getWidth() * entity.getHeight() > 0.512F) {
-            setToDirt(state, world, pos);
-        }
+	private static boolean isNearWater(LevelReader levelReader, BlockPos blockPos) {
+		for(BlockPos blockPos2 : BlockPos.betweenClosed(blockPos.offset(-4, 0, -4), blockPos.offset(4, 1, 4))) {
+			if (levelReader.getFluidState(blockPos2).is(FluidTags.WATER)) {
+				return true;
+			}
+		}
 
-        super.onLandedUpon(world, state, pos, entity, fallDistance);
-    }
-
-    public static void setToDirt(BlockState state, World world, BlockPos pos) {
-        world.setBlockState(pos, pushEntitiesUpBeforeBlockChange(state, CMBlocks.COBALT_DIRT.getDefaultState(), world, pos));
-    }
-
-    private static boolean hasCrop(BlockView world, BlockPos pos) {
-        Block block = world.getBlockState(pos.up()).getBlock();
-        return block instanceof CropBlock || block instanceof StemBlock || block instanceof AttachedStemBlock;
-    }
-
-    protected static float getAvailableMoisture(Block block, BlockView world, BlockPos pos) {
-        float f = 1.0F;
-        BlockPos blockPos = pos.down();
-
-        for(int i = -1; i <= 1; ++i) {
-            for(int j = -1; j <= 1; ++j) {
-                float g = 0.0F;
-                BlockState blockState = world.getBlockState(blockPos.add(i, 0, j));
-                if (blockState.isIn(CMBlockTags.FARMLAND)) {
-                    g = 1.0F;
-                    if ((Integer)blockState.get(CMFarmlandBlock.MOISTURE) > 0) {
-                        g = 3.0F;
-                    }
-                }
-
-                if (i != 0 || j != 0) {
-                    g /= 4.0F;
-                }
-
-                f += g;
-            }
-        }
-
-        BlockPos blockPos2 = pos.north();
-        BlockPos blockPos3 = pos.south();
-        BlockPos blockPos4 = pos.west();
-        BlockPos blockPos5 = pos.east();
-        boolean bl = world.getBlockState(blockPos4).isOf(block) || world.getBlockState(blockPos5).isOf(block);
-        boolean bl2 = world.getBlockState(blockPos2).isOf(block) || world.getBlockState(blockPos3).isOf(block);
-        if (bl && bl2) {
-            f /= 2.0F;
-        } else {
-            boolean bl3 = world.getBlockState(blockPos4.north()).isOf(block) || world.getBlockState(blockPos5.north()).isOf(block) || world.getBlockState(blockPos5.south()).isOf(block) || world.getBlockState(blockPos4.south()).isOf(block);
-            if (bl3) {
-                f /= 2.0F;
-            }
-        }
-
-        return f;
-    }
-
-    private static boolean isWaterNearby(WorldView world, BlockPos pos) {
-        Iterator<BlockPos> var2 = BlockPos.iterate(pos.add(-4, 0, -4), pos.add(4, 1, 4)).iterator();
-
-        BlockPos blockPos;
-        do {
-            if (!var2.hasNext()) {
-                return false;
-            }
-
-            blockPos = var2.next();
-        } while(!world.getFluidState(blockPos).isIn(FluidTags.WATER));
-
-        return true;
-    }
+		return false;
+	}
 }

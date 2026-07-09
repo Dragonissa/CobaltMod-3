@@ -1,80 +1,87 @@
 package de.prwh.cobaltmod.core.world.gen.treedecorator;
 
 import com.mojang.serialization.Codec;
+import de.prwh.cobaltmod.core.CobaltMod;
 import de.prwh.cobaltmod.core.block.CMBlocks;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.VineBlock;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.TestableWorld;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.treedecorator.TreeDecorator;
-import net.minecraft.world.gen.treedecorator.TreeDecoratorType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.VineBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.levelgen.feature.treedecorators.LeaveVineDecorator;
 
-import java.util.List;
+import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecorator;
+import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
+
 import java.util.Random;
-import java.util.function.BiConsumer;
 
-public class LeavesBlueVineTreeDecorator extends TreeDecorator {
 
-	public static final LeavesBlueVineTreeDecorator INSTANCE = new LeavesBlueVineTreeDecorator();
+public class LeavesBlueVineTreeDecorator extends LeaveVineDecorator {
+
+	public static final LeavesBlueVineTreeDecorator INSTANCE = new LeavesBlueVineTreeDecorator(new Random().nextFloat());
 	// Our constructor doesn't have any arguments, so we create a unit codec that returns the singleton instance
 	public static final Codec<LeavesBlueVineTreeDecorator> CODEC = Codec.unit(() -> INSTANCE);
+	private final float probability;
 
-	private LeavesBlueVineTreeDecorator() {}
-
-	@Override
-	protected TreeDecoratorType<?> getType() {
-		return null;
+	public LeavesBlueVineTreeDecorator(float f) {
+		super(f);
+		this.probability = f;
 	}
 
 	@Override
-	public void generate(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, List<BlockPos> logPositions, List<BlockPos> leavesPositions) {
-		leavesPositions.forEach(pos -> {
-			BlockPos blockPos;
-			if (random.nextInt(4) == 0) {
-				blockPos = pos.west();
-				if (Feature.isAir(world, blockPos)) {
-					placeVines(world, blockPos, VineBlock.EAST, replacer);
+	protected TreeDecoratorType<?> type() {
+		return CobaltMod.LEAVES_BLUE_VINE_TREE_DECORATOR;
+	}
+
+	@Override
+	public void place(TreeDecorator.Context context) {
+		RandomSource randomSource = context.random();
+		context.leaves().forEach((blockPos) -> {
+			if (randomSource.nextFloat() < this.probability) {
+				BlockPos blockPos2 = blockPos.west();
+				if (context.isAir(blockPos2)) {
+					addHangingVine(blockPos2, VineBlock.EAST, context);
 				}
 			}
 
-			if (random.nextInt(4) == 0) {
-				blockPos = pos.east();
-				if (Feature.isAir(world, blockPos)) {
-					placeVines(world, blockPos, VineBlock.WEST, replacer);
+			if (randomSource.nextFloat() < this.probability) {
+				BlockPos blockPos2 = blockPos.east();
+				if (context.isAir(blockPos2)) {
+					addHangingVine(blockPos2, VineBlock.WEST, context);
 				}
 			}
 
-			if (random.nextInt(4) == 0) {
-				blockPos = pos.north();
-				if (Feature.isAir(world, blockPos)) {
-					placeVines(world, blockPos, VineBlock.SOUTH, replacer);
+			if (randomSource.nextFloat() < this.probability) {
+				BlockPos blockPos2 = blockPos.north();
+				if (context.isAir(blockPos2)) {
+					addHangingVine(blockPos2, VineBlock.SOUTH, context);
 				}
 			}
 
-			if (random.nextInt(4) == 0) {
-				blockPos = pos.south();
-				if (Feature.isAir(world, blockPos)) {
-					placeVines(world, blockPos, VineBlock.NORTH, replacer);
+			if (randomSource.nextFloat() < this.probability) {
+				BlockPos blockPos2 = blockPos.south();
+				if (context.isAir(blockPos2)) {
+					addHangingVine(blockPos2, VineBlock.NORTH, context);
 				}
 			}
 
 		});
 	}
 
-	private static void placeVines(TestableWorld world, BlockPos pos, BooleanProperty facing, BiConsumer<BlockPos, BlockState> replacer) {
-		placeVine(replacer, pos, facing);
+	private static void addHangingVine(BlockPos blockPos, BooleanProperty booleanProperty, TreeDecorator.Context context) {
+		placeVine(context, blockPos, booleanProperty);
 		int i = 4;
 
-		for(pos = pos.down(); Feature.isAir(world, pos) && i > 0; --i) {
-			placeVine(replacer, pos, facing);
-			pos = pos.down();
+		for(BlockPos var4 = blockPos.below(); context.isAir(var4) && i > 0; --i) {
+			placeVine(context, var4, booleanProperty);
+			var4 = var4.below();
 		}
 
 	}
 
-	protected static void placeVine(BiConsumer<BlockPos, BlockState> replacer, BlockPos pos, BooleanProperty facing) {
-		replacer.accept(pos, CMBlocks.BLUE_VINE.getDefaultState().with(facing, true));
+	private static void placeVine(TreeDecorator.Context context, BlockPos pos, BooleanProperty property) {
+		BlockState vineState = CMBlocks.BLUE_VINE.defaultBlockState().setValue(property, true);
+		context.setBlock(pos, vineState);
 	}
 }

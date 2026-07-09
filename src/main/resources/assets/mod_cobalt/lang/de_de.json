@@ -140,8 +140,8 @@
     "item.mod_cobalt.wind_axe.tooltip_3": "Rechtsklick schleudert den Benutzer in die Luft",
 
 
-    "itemGroup.mod_cobalt.items": "Cobalt Mod Gegenstände",
-    "itemGroup.mod_cobalt.blocks": "Cobalt Mod Blöcke",
+    "itemGroup.mod_cobalt.item_group": "Cobalt Mod Gegenstände",
+    "itemGroup.mod_cobalt.block_group": "Cobalt Mod Blöcke",
 
 
     "entity.mod_cobalt.CobaltZombie": "Cobaltzombie",

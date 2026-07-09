@@ -2,70 +2,51 @@ package de.prwh.cobaltmod.core.block;
 
 import de.prwh.cobaltmod.core.item.CMItems;
 import de.prwh.cobaltmod.core.tag.CMBlockTags;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SweetBerryBushBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.SweetBerryBushBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
 
 public class BlueBerryBushBlock extends SweetBerryBushBlock {
-	public BlueBerryBushBlock(Settings settings) {
-		super(settings);
+	public BlueBerryBushBlock(BlockBehaviour.Properties properties) {
+		super(properties);
 	}
 
 	@Override
-	protected boolean canPlantOnTop(BlockState floor, BlockView world, BlockPos pos) {
-		return floor.isIn(CMBlockTags.DIRT) || floor.isIn(CMBlockTags.FARMLAND);
+	protected boolean mayPlaceOn(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
+		return blockState.is(CMBlockTags.DIRT) ;
 	}
-
-	@Override
-	public ItemStack getPickStack(BlockView world, BlockPos pos, BlockState state) {
+	public @NotNull ItemStack getCloneItemStack(BlockGetter blockGetter, BlockPos blockPos, BlockState blockState) {
 		return new ItemStack(CMItems.BLUE_BERRY);
 	}
 
-	@Override
-	public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
-		if (entity instanceof LivingEntity && entity.getType() != EntityType.FOX && entity.getType() != EntityType.BEE) {
-			entity.slowMovement(state, new Vec3d(0.800000011920929, 0.75, 0.800000011920929));
-			if (!world.isClient && state.get(AGE) > 0 && (entity.lastRenderX != entity.getX() || entity.lastRenderZ != entity.getZ())) {
-				double d = Math.abs(entity.getX() - entity.lastRenderX);
-				double e = Math.abs(entity.getZ() - entity.lastRenderZ);
-				if (d >= 0.003000000026077032 || e >= 0.003000000026077032) {
-					//TODO own dmg source
-					entity.damage(DamageSource.SWEET_BERRY_BUSH, 1.0F);
-				}
-			}
-
-		}
-	}
-
-	@Override
-	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-		int i = state.get(AGE);
+	public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+		int i = (Integer)blockState.getValue(AGE);
 		boolean bl = i == 3;
-		if (!bl && player.getStackInHand(hand).isOf(Items.BONE_MEAL)) {
-			return ActionResult.PASS;
+		if (!bl && player.getItemInHand(interactionHand).is(Items.BONE_MEAL)) {
+			return InteractionResult.PASS;
 		} else if (i > 1) {
-			int j = 1 + world.random.nextInt(2);
-			dropStack(world, pos, new ItemStack(CMItems.BLUE_BERRY, j + (bl ? 1 : 0)));
-			world.playSound(null, pos, SoundEvents.BLOCK_SWEET_BERRY_BUSH_PICK_BERRIES, SoundCategory.BLOCKS, 1.0F, 0.8F + world.random.nextFloat() * 0.4F);
-			world.setBlockState(pos, state.with(AGE, 1), 2);
-			return ActionResult.success(world.isClient);
+			int j = 1 + level.random.nextInt(2);
+			popResource(level, blockPos, new ItemStack(CMItems.BLUE_BERRY, j + (bl ? 1 : 0)));
+			level.playSound((Player)null, blockPos, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.8F + level.random.nextFloat() * 0.4F);
+			BlockState blockState2 = (BlockState)blockState.setValue(AGE, 1);
+			level.setBlock(blockPos, blockState2, 2);
+			level.gameEvent(GameEvent.BLOCK_CHANGE, blockPos, GameEvent.Context.of(player, blockState2));
+			return InteractionResult.sidedSuccess(level.isClientSide);
 		} else {
-			return super.onUse(state, world, pos, player, hand, hit);
+			return super.use(blockState, level, blockPos, player, interactionHand, blockHitResult);
 		}
 	}
 }

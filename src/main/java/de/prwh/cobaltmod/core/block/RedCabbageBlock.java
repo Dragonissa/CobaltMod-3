@@ -1,14 +1,17 @@
 package de.prwh.cobaltmod.core.block;
 
 import de.prwh.cobaltmod.core.item.CMItems;
-import net.minecraft.item.ItemConvertible;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 public class RedCabbageBlock extends CMCropBlock {
-    public RedCabbageBlock(Settings settings) {
-        super(settings);
+    public RedCabbageBlock(BlockBehaviour.Properties properties) {
+        super(properties);
     }
 
-    protected ItemConvertible getSeedsItem() {
-        return CMItems.RED_CABBAGE_SEEDS;
-    }
+	@Override
+	protected ItemLike getBaseSeedId() {
+		return CMItems.RED_CABBAGE_SEEDS;
+	}
 }

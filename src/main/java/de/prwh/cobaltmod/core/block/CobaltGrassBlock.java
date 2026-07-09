@@ -1,73 +1,41 @@
 package de.prwh.cobaltmod.core.block;
 
 import de.prwh.cobaltmod.core.CobaltMod;
-import net.minecraft.advancement.Advancement;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldView;
-import net.minecraft.world.chunk.light.ChunkLightProvider;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.Random;
-
-public class CobaltGrassBlock extends Block {
+public class CobaltGrassBlock extends CMSpreadingBlock {
 
     static final String CRITERION = "step_on_block";
 
-    public CobaltGrassBlock(Settings settings) {
-        super(settings);
-    }
-
-    private static boolean canSurvive(BlockState state, WorldView world, BlockPos pos) {
-        BlockPos blockPos = pos.up();
-        BlockState blockState = world.getBlockState(blockPos);
-        if (blockState.getFluidState().getLevel() == 8) {
-            return false;
-        } else {
-            int i = ChunkLightProvider.getRealisticOpacity(world, state, pos, blockState, blockPos, Direction.UP, blockState.getOpacity(world, blockPos));
-            return i < world.getMaxLightLevel();
-        }
+    public CobaltGrassBlock(BlockBehaviour.Properties properties) {
+        super(properties);
     }
 
     @Override
-    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        if (!canSurvive(state, world, pos)) {
-            world.setBlockState(pos, CMBlocks.COBALT_DIRT.getDefaultState());
-        } else {
-            /* TODO check later
-            if (world.getLightLevel(pos.up()) >= 9) {
-                for (int i = 0; i < 4; ++i) {
-                    BlockPos blockPos = pos.add(random.nextInt(3) - 1, random.nextInt(5) - 3, random.nextInt(3) - 1);
-                    CMReplace.replaceBlock(world, blockPos);
-                }
-            }*/
-        }
-    }
+	public void animateTick(BlockState blockState, Level level, BlockPos blockPos, RandomSource randomSource) {
+		super.animateTick(blockState, level, blockPos, randomSource);
+		if (randomSource.nextInt(10) == 0) {
+			level.addParticle(CobaltMod.COBALT_AURA, (double)blockPos.getX() + randomSource.nextDouble(), (double)blockPos.getY() + 1.1, (double)blockPos.getZ() + randomSource.nextDouble(), (double)0.0F, (double)0.0F, (double)0.0F);
+		}
 
-    @Override
-    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
-        super.randomDisplayTick(state, world, pos, random);
-        if (random.nextInt(10) == 0) {
-            world.addParticle(CobaltMod.COBALT_AURA, (double) pos.getX() + random.nextDouble(), (double) pos.getY() + 1.1D, (double) pos.getZ() + random.nextDouble(), 0.0D, 0.0D, 0.0D);
-        }
-    }
+	}
 
-    @Override
-    public void onSteppedOn(World world, BlockPos pos, BlockState state, Entity entity) {
-
-        //TODO adjust for different boot types - Api?
-        if (!entity.isFireImmune() && entity instanceof LivingEntity livingEntity && !EnchantmentHelper.hasFrostWalker(livingEntity)) {
-            entity.damage(DamageSource.MAGIC, 1.0F);
-        }
-        super.onSteppedOn(world, pos, state, entity);
-    }
+	@Override
+	public void stepOn(Level level, BlockPos blockPos, BlockState blockState, Entity entity) {
+		if (!level.isClientSide && entity instanceof LivingEntity livingEntity) {
+			//TODO adjust for different boot types - Api?
+			if (!EnchantmentHelper.hasFrostWalker(livingEntity)) {
+				return;
+			}
+			entity.hurt(level.damageSources().magic(), 1.0F);
+		}
+		super.stepOn(level, blockPos, blockState, entity);
+	}
 }

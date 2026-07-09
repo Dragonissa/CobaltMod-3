@@ -140,8 +140,8 @@
     "item.mod_cobalt.wind_axe.tooltip_3": "Right-click throws you in the air",
 
 
-    "itemGroup.mod_cobalt.items": "Cobalt Mod Items",
-    "itemGroup.mod_cobalt.blocks": "Cobalt Mod Blocks",
+    "itemGroup.mod_cobalt.item_group": "Cobalt Mod Items",
+    "itemGroup.mod_cobalt.block_group": "Cobalt Mod Blocks",
 
 
     "entity.mod_cobalt.CobaltZombie": "Cobalt Zombie",
