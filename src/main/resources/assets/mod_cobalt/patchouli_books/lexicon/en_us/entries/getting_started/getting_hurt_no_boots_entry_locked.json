@@ -1,0 +1,17 @@
+{
+  "name": "Ouch, it hurts",
+  "icon": "minecraft:writable_book",
+  "category": "mod_cobalt:getting_started_category",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "You should have realised by now that this world isn't as friendly as others!"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "mod_cobalt:cobalt_grass_block",
+      "text": "The grass here is very dangerous and will damage you if you walk on it without boots. You can craft some leather boots to protect yourself from the grass."
+    }
+  ],
+  "advancement": "mod_cobalt:misc/cobalt_grass_damage"
+}

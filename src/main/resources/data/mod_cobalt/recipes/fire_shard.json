@@ -2,14 +2,15 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     " # ",
-    "#F#"
+    "#F#",
+    " # "
   ],
   "key": {
     "#": {
       "item": "mod_cobalt:cobalt_nugget"
     },
     "F": {
-      "item": "minecraft:flint"
+      "item": "minecraft:flint_and_steel"
     }
   },
   "result": {

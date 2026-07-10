@@ -1,0 +1,16 @@
+{
+  "name": "Getting started",
+  "icon": "minecraft:writable_book",
+  "category": "mod_cobalt:getting_started_category",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Begin by crafting a Fire Shard using the recipe shown on the right. This shard is the key to activating the portal — once you have it, use it to ignite the frame and open your path forward."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "mod_cobalt:fire_shard",
+      "recipe2": "mod_cobalt:lexicon_recipe_shaped"
+    }
+  ]
+}

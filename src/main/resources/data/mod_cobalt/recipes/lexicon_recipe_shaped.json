@@ -1,0 +1,17 @@
+{
+  "type": "patchouli:shaped_book_recipe",
+  "pattern": [
+    " # ",
+    "#X#",
+    " # "
+  ],
+  "key": {
+    "#": {
+      "item": "mod_cobalt:cobalt_nugget"
+    },
+    "X": {
+      "item": "minecraft:book"
+    }
+  },
+  "book": "mod_cobalt:lexicon"
+}

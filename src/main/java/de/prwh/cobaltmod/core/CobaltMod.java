@@ -18,7 +18,10 @@ import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.valueproviders.ConstantInt;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
@@ -70,6 +73,9 @@ public class CobaltMod implements ModInitializer {
 	public static final FoodProperties COOKED_RED_CABBAGE = (new FoodProperties.Builder()).nutrition(4).saturationMod(0.6F).build();
 	public static final FoodProperties COBALT_APPLE = (new FoodProperties.Builder()).nutrition(6).saturationMod(0.8F).build();
 
+	//DamageType
+	public static final ResourceKey<DamageType> COBALT_MAGIC_DAMAGE_TYPE = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(MOD_ID, "cobalt_magic"));
+
 	@Override
 	public void onInitialize() {
 
@@ -90,6 +96,8 @@ public class CobaltMod implements ModInitializer {
 			.destDimID(new ResourceLocation(MOD_ID, "cobaldis"))
 			.tintColor(7, 37, 94)
 			.onlyLightInOverworld()
+			.setPortalSearchYRange(50, 80)
+			.setReturnPortalSearchYRange(50, 80)
 			.registerPortal();
 
 		CMReplace.addBlocks(CMBlocks.COBALT_DIRT, CMBlocks.COBALT_GRASS_BLOCK);

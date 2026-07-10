@@ -19,8 +19,10 @@
     "found_portal": {
       "trigger": "minecraft:location",
       "conditions": {
-        "location": {
-          "feature": "mod_cobalt:ruined_portal"
+        "player": {
+          "stepping_on": {
+            "structure": "mod_cobalt:ruined_portal"
+          }
         }
       }
     }
@@ -29,5 +31,10 @@
     [
       "found_portal"
     ]
-  ]
+  ],
+  "rewards": {
+    "loot": [
+      "mod_cobalt:grant_book_on_finding_structure"
+    ]
+  }
 }

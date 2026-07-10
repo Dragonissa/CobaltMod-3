@@ -1,0 +1,25 @@
+{
+  "criteria": {
+    "test": {
+      "trigger": "minecraft:entity_hurt_player",
+      "conditions": {
+        "player": {},
+        "damage": {
+          "type": {
+            "tags": [
+              {
+                "id": "mod_cobalt:cobalt_magic",
+                "expected": true
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "test"
+    ]
+  ]
+}

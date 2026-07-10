@@ -2,7 +2,9 @@ package de.prwh.cobaltmod.core.block;
 
 import de.prwh.cobaltmod.core.CobaltMod;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -30,11 +32,13 @@ public class CobaltGrassBlock extends CMSpreadingBlock {
 	@Override
 	public void stepOn(Level level, BlockPos blockPos, BlockState blockState, Entity entity) {
 		if (!level.isClientSide && entity instanceof LivingEntity livingEntity) {
+			DamageSource damageSource = new DamageSource(
+				level.registryAccess()
+					.registryOrThrow(Registries.DAMAGE_TYPE)
+					.getHolderOrThrow(CobaltMod.COBALT_MAGIC_DAMAGE_TYPE));
+
 			//TODO adjust for different boot types - Api?
-			if (!EnchantmentHelper.hasFrostWalker(livingEntity)) {
-				return;
-			}
-			entity.hurt(level.damageSources().magic(), 1.0F);
+			entity.hurt(damageSource, 1.0F);
 		}
 		super.stepOn(level, blockPos, blockState, entity);
 	}

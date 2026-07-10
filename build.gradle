@@ -44,11 +44,12 @@ dependencies {
 	}
 }
 
+def modVersion = project.version
 processResources {
-	inputs.property "version", project.version
+	inputs.property "version", modVersion
 
 	filesMatching("fabric.mod.json") {
-		expand "version": inputs.properties.version
+		expand(version: modVersion)
 	}
 }
 
@@ -66,11 +67,12 @@ java {
 	targetCompatibility = JavaVersion.VERSION_21
 }
 
+def archivesName = project.base.archivesName
 jar {
-	inputs.property "archivesName", project.base.archivesName
+	inputs.property("archivesName", archivesName)
 
 	from("LICENSE.md") {
-		rename { "${it}_${inputs.properties.archivesName}.md"}
+		rename { "${it}_${archivesName}.md" }
 	}
 }
 

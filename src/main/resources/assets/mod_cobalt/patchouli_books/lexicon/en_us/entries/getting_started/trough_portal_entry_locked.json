@@ -1,0 +1,12 @@
+{
+  "name": "Through the Portal",
+  "icon": "minecraft:writable_book",
+  "category": "mod_cobalt:getting_started_category",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "This is a test entry, but it should show up after traveling through the portal!"
+    }
+  ],
+  "advancement": "mod_cobalt:story/travel_to_cobaldis"
+}
