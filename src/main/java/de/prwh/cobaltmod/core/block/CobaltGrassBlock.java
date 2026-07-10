@@ -6,8 +6,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -38,6 +38,9 @@ public class CobaltGrassBlock extends CMSpreadingBlock {
 					.getHolderOrThrow(CobaltMod.COBALT_MAGIC_DAMAGE_TYPE));
 
 			//TODO adjust for different boot types - Api?
+			if (livingEntity.hasItemInSlot(EquipmentSlot.FEET)) {
+				return;
+			}
 			entity.hurt(damageSource, 1.0F);
 		}
 		super.stepOn(level, blockPos, blockState, entity);

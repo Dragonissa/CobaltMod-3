@@ -1,7 +1,6 @@
 package de.prwh.cobaltmod.core.block;
 
 import de.prwh.cobaltmod.core.item.CMItems;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 

@@ -4,6 +4,7 @@ import de.prwh.cobaltmod.core.CobaltMod;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.grower.AbstractTreeGrower;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import org.jetbrains.annotations.Nullable;
 
 public class TallCobexTreeGrower extends AbstractTreeGrower {
@@ -11,7 +12,7 @@ public class TallCobexTreeGrower extends AbstractTreeGrower {
 	}
 
 	@Override
-	protected @Nullable ResourceKey<net.minecraft.world.level.levelgen.feature.ConfiguredFeature<?, ?>> getConfiguredFeature(RandomSource randomSource, boolean bl) {
+	protected @Nullable ResourceKey<ConfiguredFeature<?, ?>> getConfiguredFeature(RandomSource randomSource, boolean bl) {
 		return CobaltMod.TALL_COBEX;
 	}
 }
