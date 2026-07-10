@@ -13,8 +13,10 @@ public class CobexTreeGrower extends AbstractTreeGrower {
 
 	@Override
 	protected @Nullable ResourceKey<ConfiguredFeature<?, ?>> getConfiguredFeature(RandomSource randomSource, boolean bl) {
-		return CobaltMod.COBEX;
+		if (randomSource.nextInt(10) == 0) {
+			return CobaltMod.FANCY_COBEX;
+		} else {
+			return CobaltMod.COBEX;
+		}
 	}
 }
-
-

@@ -44,12 +44,12 @@ public class CobaltMod implements ModInitializer {
 		.title(Component.translatable("itemGroup.mod_cobalt.item_group"))
 		.build();
 
-
 	//Particle
 	public static final SimpleParticleType COBALT_AURA = FabricParticleTypes.simple();
 
 	//Trees
 	public static final ResourceKey<ConfiguredFeature<?, ?>> COBEX = ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(MOD_ID, "cobex_tree"));
+	public static final ResourceKey<ConfiguredFeature<?, ?>> FANCY_COBEX = ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(MOD_ID, "fancy_cobex_tree"));
 	public static final ResourceKey<ConfiguredFeature<?, ?>> TALL_COBEX = ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(MOD_ID, "tall_cobex_tree"));
 
 	//TreeDecorator
@@ -74,9 +74,6 @@ public class CobaltMod implements ModInitializer {
 
 		CMBlocks.init();
 		CMItems.init();
-
-//		setTreeFeatureCobex(FeatureUtils.register("cobex", Feature.TREE, (createStraightBlobTree(CMBlocks.COBEX_LOG, CMBlocks.COBEX_LEAVES, 4, 2, 0, 2)).dirt(BlockStateProvider.simple(CMBlocks.COBALT_DIRT)).ignoreVines().build()));
-//		setTreeFeatureTallCobex(FeatureUtils.register("tall_cobex", Feature.TREE, (createStraightBlobTree(CMBlocks.COBEX_LOG, CMBlocks.TALL_COBEX_LEAVES, 8, 2, 0, 2)).dirtProvider(BlockStateProvider.of(CMBlocks.COBALT_DIRT)).ignoreVines().build()));
 
 		CustomPortalBuilder.beginPortal()
 			.frameBlock(CMBlocks.PORTAL_FRAME)

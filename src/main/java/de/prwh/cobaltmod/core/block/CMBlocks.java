@@ -119,7 +119,7 @@ public class CMBlocks {
 		BLUEBERRY_BUSH = registerBlock("blueberry_bush", new BlueBerryBushBlock(FabricBlockSettings.create().ticksRandomly().noCollision().sounds(SoundType.SWEET_BERRY_BUSH)), false, false);
 //
 		BLUE_VINE = registerBlock("blue_vine", new VineBlock(FabricBlockSettings.copy(Blocks.VINE)));
-		//COBEX_CHEST = addBlock("cobex_chest", new ChestBlock(FabricBlockSettings.of(Material.WOOD).strength(2.5F).sounds(BlockSoundGroup.WOOD), () -> BlockEntityType.CHEST));
+		//COBEX_CHEST = registerBlock("cobex_chest", new CobexChestBlock(FabricBlockSettings.create().strength(2.5F).sounds(SoundType.WOOD), () -> CMEntities.COBEX_CHEST));
 	}
 
     private static <T extends Block> T registerBlock(String name, T block) {
